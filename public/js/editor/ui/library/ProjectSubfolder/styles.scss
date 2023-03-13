@@ -1,0 +1,52 @@
+#newFolderBtn{
+    background-color: transparent;
+}
+
+#delete-folder-menu{
+    position: fixed;
+    overflow: hidden;
+    z-index: 99999999999;
+    background-color: #12161e;
+    padding:0px;
+    border-radius: 8px;
+    font-size: 12px;
+    &>*{
+        padding:3px 8px;
+        margin:0px;
+        color:#6c8db8;
+        cursor: pointer;
+        background-color: transparent;
+        &:hover{
+            background-color: #242b47;
+        }
+    }
+}
+
+.projectSubFolder .AccordionTitleText{
+    min-width: 40px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+    &:focus-visible{
+        outline: none;
+    }
+    *{
+        display: inline;
+    }
+    br{
+        display: none;
+    }
+}
+
+.projectSubFolder .AccordionTitle{
+    &::focus-visible{
+        border: 0;
+        outline: none;
+    }
+
+    *::focus-visible{
+        border: 0;
+        outline: none;
+    }
+} 

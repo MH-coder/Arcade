@@ -1,0 +1,15 @@
+.popup-wrapper#pro-popup
+  .pro-popup
+    .popup-close
+      img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/engine-ui/close-delete-btn.svg" width="15" height="15" alt="")
+    .popup-body
+      p.title This is a PRO feature
+      p.text upgrade to pro to unlock this feature and more
+      a.popup-button(href="/create?continue_with=membership") ready to upgrade
+
+script.
+  window.addEventListener('load', function() {
+    $('#pro-popup .popup-close').on('click', function() {
+      $('#pro-popup').fadeOut();
+    });
+  });

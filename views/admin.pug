@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  .admin-home-container
+    .add-sample-wrapper
+      .add-sample
+        img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/website/master/add-btn.svg" width="13")
+    .sample-gallery
+      each sample in samples
+        .sample(data-id=sample.id)
+          .delete-sample
+            img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/engine-ui/close-delete-btn.svg")
+          .sample-img(style=(sample.thumbnail ? "background-image: url("+sample.thumbnail+")" : ""))
+          .sample-description
+            img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/website/master/item-side-menu-options/project-details-btn.svg" width="25" height="25")
+          .sample-content
+            .sample-title.editable-object(data-attribute="title")=sample.title ? sample.title : "Your title here"
+            .sample-author.editable-object(data-attribute="author")=sample.author ? sample.author : "Your name here"
+            .sample-slug.editable-object(data-attribute="slug")=sample.slug ? sample.slug : "Your slug here"
+          .sample-description-box(style="opacity: 0")
+            textarea.sample-description-text(disabled="disabled" maxlength="750" spellcheck="true" placeholder="Your description here..." data-undo-text=`${sample.description}`)=sample.description
+            .sample-description-nonediting
+              .sample-description-edit='Edit'
+              .sample-description-exit='Exit'
+            .sample-description-editing(style="display:none")
+              .sample-description-undo='Undo'
+              .sample-description-save='Save'
+block script
+  script(src='/js/lib/Sortable.min.js')
+  script(src='/js/lib/jquery-sortable.js')
+  script(src='/js/admin.js')
+  script(src='/js/csrf.js')

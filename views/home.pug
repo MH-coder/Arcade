@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  .home-container
+    .sample-gallery
+      each sample in samples
+        .sample
+          .sample-img(href="#" data-title=sample.title data-details=(sample.title + ": " + sample.author) data-slug=sample.slug data-username=sample.author data-author=(sample.author ? sample.author : '') data-thumbnail=sample.thumbnail data-description=sample.description ? sample.description : "" style=(sample.thumbnail ? "background-image: url("+sample.thumbnail+")" : ""))
+          .sample-content
+            .sample-title
+              a(href=sample.author target="_blank")=sample.title ? sample.title : "Your title here"
+  include partials/app-popup
+block script
+  script(src='/js/popup.js')
+  script(src='/js/explore.js')
+  script(src='/js/csrf.js')
+  script(src='/js/share.js')
+
+  script(async='', src='https://www.googletagmanager.com/gtag/js?id=G-42884FCM73')
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-42884FCM73');

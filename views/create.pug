@@ -1,0 +1,713 @@
+extends layout
+
+block head
+  script(src='/js/lib/lottie-player.js')
+
+block content
+  //- Edit Stripe Card Modal
+  #edit-stripe-card.arcade-modal
+    .arcade-modal-content
+      .head
+        h2 Edit
+          span
+      .body
+        #card-edit-element
+      .foot
+        .payment-method-buttons
+          button.cancel.arcade-modal-close Cancel
+          button.save Save
+
+  //- Delete Stripe Card Modal
+  #delete-stripe-card.arcade-modal
+    .arcade-modal-content
+      .head
+        h2 Delete
+          span
+        p(style="font-weight:bold;margin-bottom:3px;") Are you sure you want to delete?
+      .body
+      .foot
+        .payment-method-buttons
+          button.cancel.arcade-modal-close Cancel
+          button.delete Delete
+
+  //- Delete PayPal Modal
+  #delete-paypal.arcade-modal
+    .arcade-modal-content
+      .head
+        h2 Delete
+          span
+        p(style="font-weight:bold;margin-bottom:3px;") Are you sure you want to delete?
+      .body
+      .foot
+        .payment-method-buttons
+          button.cancel.arcade-modal-close Cancel
+          button.delete Delete
+
+  //- Power Up On Modal
+  #power-up-on.arcade-modal
+    .arcade-modal-content.arcade-modal-content-2
+      .head
+        h2.target-title
+        p.target-description
+      .body
+        div
+          h4 Select A Payment Method
+          each eachPayment in user.Payments
+            label.arcade-radio
+              span.title=eachPayment.title
+              input(type="radio", name="power_up_payment_method", value=eachPayment.id, data-type=eachPayment.paymentableType)
+              span.checkmark
+          button.add-payment-method + New Payment Method
+          .coupon-form
+            .coupon-field
+              input.coupon-code(type="text" placeholder="ENTER CODE HERE" spellcheck="false")
+              a.coupon-submit submit code
+            .coupon-field.coupon-valid promo code has been applied
+            .coupon-field.coupon-invalid invalid code. Try again.
+          .promo-code="Have a promo code?"  
+        .success-icon
+          img(src="https://assets.website-files.com/616a041ea72c58e139ed3c8e/616a041ea72c58f2caed3cca_Engine-icons-checkmark-green-01.png")    
+      .foot
+        .arcade-modal-buttons
+          button.get-power-up.target-id
+            span.spinner
+            span.text GET POWER UP
+          button.arcade-modal-close CANCEL
+
+  //- Power Up Off Modal
+  #power-up-off.arcade-modal
+    .arcade-modal-content.arcade-modal-content-2
+      .head
+        h2.target-title
+        p.target-description
+      .body
+        div
+          h4 Current Payment Method
+          label.arcade-radio
+            span.target-current-payment
+            input.target-payment-type(type="radio", autocomplete="off", checked="checked", name="power_up_payment_method")
+            span.checkmark
+        .success-icon
+          img(src="https://assets.website-files.com/616a041ea72c58e139ed3c8e/616a041ea72c58f2caed3cca_Engine-icons-checkmark-green-01.png")
+      .foot
+        .arcade-modal-buttons
+          button.red-cancel.cancel-power-up.target-id
+            span.spinner
+            span.text CONFIRM CANCEL
+          button.arcade-modal-close NEVERMIND
+
+  #power-up-reactivate.arcade-modal
+    .arcade-modal-content.arcade-modal-content-2
+      .head
+        h2.target-title
+        p.target-description
+      .body
+        div
+          h4 Current Payment Method
+          label.arcade-radio
+            span.target-current-payment
+            input.target-payment-type(type="radio", autocomplete="off", checked="checked", name="power_up_payment_method")
+            span.checkmark
+        .success-icon
+          img(src="https://assets.website-files.com/616a041ea72c58e139ed3c8e/616a041ea72c58f2caed3cca_Engine-icons-checkmark-green-01.png")
+      .foot
+        .arcade-modal-buttons
+          button.red-cancel.reactive-power-up.target-id
+            span.spinner
+            span.text Reactivate Powerup?
+          button.arcade-modal-close NEVERMIND
+
+  //- Power Up Update Modal
+  #power-up-update.arcade-modal
+    .arcade-modal-content.arcade-modal-content-2
+      .head
+        h2.target-title
+        p.target-description
+      .body
+        div
+          h4 Select A Payment Method
+          each eachPayment in user.Payments
+            label.arcade-radio
+              span.title=eachPayment.title
+              input.target-current-payment-id(type="radio", name="power_up_payment_method", value=eachPayment.id, data-type=eachPayment.paymentableType)
+              span.checkmark
+          button.add-payment-method + New Payment Method
+        .success-icon
+          img(src="https://assets.website-files.com/616a041ea72c58e139ed3c8e/616a041ea72c58f2caed3cca_Engine-icons-checkmark-green-01.png")
+        p#errormsg.error-alert Test error msg
+      .foot
+        .arcade-modal-buttons
+          input.target-selected-powerup-id(type="hidden")
+          input.target-current-payment-id(type="hidden")
+          input.target-current-payment-type(type="hidden")
+          button.update-power-up.target-id
+            span.spinner
+            span.text UPDATE PAYMENT
+          button.arcade-modal-close CANCEL
+
+  //- Delete Payment Prevention Modal
+  #delete-payment-prevention.arcade-modal
+    .arcade-modal-content.arcade-modal-content-2
+      .head
+        h2 CAN NOT REMOVE THIS PAYMENT
+      .body This Payment Method can not be removed while in use. Click `SHOW CONNECTED POWERUPS` to highlight your Power-ups connected to this payment method.
+      .foot
+        .arcade-modal-buttons
+          button.show-connected-powerups
+            span.text SHOW CONNECTED POWERUPS
+          button.arcade-modal-close CANCEL
+
+  .create-tab-bar
+    .tab-item.first.active(data-target="tab-portfolio")
+      span.text Portfolio
+    .tab-item(data-target="tab-assets", data-submenu-target="assets")
+      span.text Assets
+    .tab-item(data-target="tab-account", data-submenu-target="account" id="account")
+      span.text Account
+    .sub-menu-divide |
+    .account-submenus
+      .tab-sub-item.active(data-target="details", data-submenu="account")
+        span.text Settings
+      .tab-sub-item(data-target="membership", data-submenu="account", id="membership")
+        span.text Membership
+      .tab-sub-item(data-target="payments", data-submenu="account")
+        span.text Billing
+      .tab-sub-item(data-target="signout", data-submenu="account")
+        a.logout(href="/logout") Sign Out
+    #portal(style="overflow-x: auto;")
+
+  .create-tab-panel
+    .tab-content.open#tab-portfolio
+      .portfolio-content
+        .portfolio-banner(style=(backgroundUrl != null && (backgroundType == null || backgroundType == "image")) ? `background: url(${backgroundUrl});` : ``)
+          if backgroundType == "animation"
+            lottie-player.portfolio-bg(autoplay=true loop=true mode="normal" src=backgroundUrl)
+          if backgroundType == "video"
+            video.portfolio-bg(preload="auto" autoplay=true loop="loop" muted="muted" volume="0")
+              source(src=backgroundUrl)
+          if backgroundType == "app"
+            iframe.portfolio-bg(src=backgroundUrl)
+          .portfolio-text-wrapper
+            // h1.title.account-details.editable-object(data-property="profile.portfolio.title")=user.profile.portfolio.title == null ? "My Portfolio Title" : user.profile.portfolio.title
+            // p.sub-title.account-details.editable-object(data-property="profile.portfolio.subTitle")=user.profile.portfolio.subTitle == null ? "My Portfolio Subtitle" : user.profile.portfolio.subTitle
+            .edit-portfolio
+              img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/website/master/item-side-menu-options/change-image.svg" width="23" height="23")
+            .portfolio-background-options
+              .portfolio-background-option(data-type="image")="image"
+              .portfolio-background-option(data-type="video")="video"
+              .portfolio-background-option(data-type="animation")="animation"
+              each publish in user.Publishes
+                .portfolio-background-option(data-type="app" data-slug=publish.slug)='arcade.studio/'+publish.slug
+        .add-to-portfolio
+          .portfolio-button
+            .icon
+              img.down-arrow(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/website/master/large-arrow.svg" width="8" height="15")
+            .text Add to Portfolio
+        .portfolio-gallery-wrapper
+          .project-slug-list
+            each publish in user.Publishes
+              .project-slug(data-id=publish.id)='arcade.studio/'+publish.slug
+          .portfolio-gallery
+
+    .tab-content#tab-assets
+    .tab-content#tab-project
+      .project-item.create
+        input.project-name(placeholder="new project name")
+        .project-button.create create
+      .project-list
+        - var projects = user.Projects.sort((x, y) => { return y.id - x.id })
+        each project in projects
+          .project-item(data-project-id=project.id)
+            .project-name.editable-object=project.name
+            .project-button.launch launch
+            .project-button.duplicate duplicate
+            .project-button.delete delete
+
+
+    .tab-content#tab-account
+      .account-content-details
+
+        .delete-membership-popup 
+          .delete-membership-popup-top
+            h1 Delete Confirmation
+            p Are you sure you want to delete your account? This action will delete all projects and published locations permanently. This can not be undone.  
+          .delete-membership-popup-mid
+            p.title Confirm by typing 'Delete permanently' below.
+            input.delete-permentaly(name="delete_permentaly", placeholder="Delete permanently")
+            #invalidDeactivate.p(style="color:#c84a4a;") Invalid Text
+          .delete-membership-popup-bottom
+            .confirm-delete DELETE FOREVER
+            .delete-confirm-nevermind NEVERMIND
+        //- .account-row-wrapper
+        //-   .account-label name
+        //-   .account-details.name.editable-object(data-property="profile.name")=user.profile.name == null ? "Your name" : user.profile.name
+        .account-row-wrapper
+          .account-label username
+          .account-details.username.editable-object(data-property="profile.username")=user.profile.username == null ? "Your username" : user.profile.username
+        
+        if Object.keys(user.tokens) == 0
+          .account-row-wrapper
+            .password-div
+              .account-label password
+              .account-details.password ***********
+            .change-password-div
+              form.change-password-form
+                input(type='hidden', name='_csrf', value=_csrf)
+                input(type="password", name="current_password", placeholder="current password")
+                .change-pass-new
+                  input(type="password", name="password", placeholder="new password" id="show-pass")
+                  span.show-pass show
+                .form-buttons
+                  button.change-password-button UPDATE
+                  button.change-password-cancel-button CANCEL
+        
+        .account-row-wrapper
+          .account-label email
+          .account-details.email(class=Object.keys(user.tokens) == 0 ? "editable-object" : "", data-property="email")=user.email
+
+        .account-row-wrapper-delete
+          .delete-link Delete my account
+
+      .tab-content#tab-account
+      .account-content-membership
+        if subscriptionData.planType
+          .already-membership-row-wrapper
+            .features-block
+              .active-pro-division
+                .active-pro-left
+                  .active-pro-icon PRO
+                .active-pro-right
+                  .active-pro-right-top
+                    if subscriptionData.planType == "monthly"
+                      span.monthly Monthly Membership
+                    else
+                      span.lifetime Lifetime Membership
+                  .active-pro-right-bottom 
+                    span.active-pro-right-bottom-text active 
+                    if subscriptionData.canceledAt
+                      span.active-pro-right-bottom-text until 
+                      span= subscriptionData.cancelAt
+            if subscriptionData.planType == "monthly" && subscriptionData.canceledAt ==null
+              .cancel-membership-popup 
+                .cancel-membership-popup-top
+                  h1 Pro Monthly Membership
+                  p Are you sure you want to cancel your "Pro Monthly Membership"? If you cancel now, you will still have access to your features until 
+                    span= subscriptionData.currentPeriodEnd
+                    span .  
+                .cancel-membership-popup-mid
+                  p.title Current Payment Method
+                  p.sub-title= subscriptionData.paymentTitle
+                .cancel-membership-popup-bottom
+                  .confirm-cancel CONFIRM CANCEL
+                  .confirm-nevermind NEVERMIND
+              .pro-prices-line
+                .full-div-block
+                  p.top 
+                    span You are being billed 
+                    span= subscriptionData.price 
+                    span  monthly for access to arcade studio pro features. Your membership renews on the 
+                    span= subscriptionData.currentPeriodEndMonth 
+                    span  of each month
+                  p.bottom 
+                    span If you would like to cancel your membership 
+                    if subscriptionData.cancelAtPeriodEnd
+                      span 
+                    else  
+                      span.cancel-member-link click here
+        else
+          .membership-row-wrapper
+            .features-block
+              .div-block
+                .icon-block
+                  .check-icon-block
+                    .check-icon
+                .text-block
+                  .text-header File Exporter
+                  .text-description Export assets and projects for use anywhere.
+                .icon-block
+                  .check-icon-block
+                    .check-icon
+                .text-block
+                  .text-header Profit Share
+                  .text-description Keep 90% of the profits from all your app sales.
+                .icon-block
+                  .check-icon-block
+                    .check-icon
+                .text-block
+                  .text-header Asset Drops
+                  .text-description Receive new 3D models, textures, music and NFT's.
+            .pro-prices-line
+              .div-block
+                .upgrade-title
+                  .div-upgrade-title-block
+                    .text-block-pro-titles Monthly
+                  .div-block-radio
+                    .radio-block.checked(data-value = "1")
+                      //- input(type='radio', name='register_webinar_', checked, value='1')#wnr1
+                .pro-price-div
+                  .pro-price-free-1 FREE
+                  .pro-price 
+                    span#pro-price-1 $29
+                .div-price-description 
+                  .price-descriptionUpgrade your account to Pro for only $29 a month. Cancel anytime.
+              .div-block
+                .upgrade-title
+                  .div-upgrade-title-block
+                    .text-block-pro-titles Lifetime
+                  .div-block-radio
+                    .radio-block(data-value = "2")
+                      //- input(type='radio', name='register_webinar_', value='2')#wnr2
+                .pro-price-div
+                  .pro-price-free-2 FREE
+                  .pro-price 
+                    span#pro-price-2 $2900
+                .div-price-description 
+                  .price-descriptionUpgrade A one time payment of $2900 will get you a Pro account for life!
+            
+            .div-upgrade-now-btn
+              .div
+                .div Upgrade Now
+            
+            .div-upgrade-btn-options
+              if user.Payments.length
+                .div-saved-cards-btn Use saved card
+              else
+                .div-saved-cards-disabled-btn Use saved card
+              .div-new-card-btn Use new card
+
+            .pro-upgrade-now-form
+
+              .pro-fields
+                .div-credit-card
+                  .card-icon
+                    .card-icon-top
+                  #stripe-card
+                .div-continue-arrow
+                  .arrow
+
+              .pro-save-cards-list
+                each eachPayment in user.Payments
+                  .card-entry
+                    .single-card-entry
+                      span.single-card-text=eachPayment.title
+                      if eachPayment.dataValues.isDefault
+                        input(style="width:30%;")(type='radio', name='saved_cards', value=eachPayment.id, checked=true)
+                      //- else if !!subscriptionData && subscriptionData.paymentMethodId == eachPayment.paymentableId
+                        input(style="width:30%;")(type='radio', name='saved_cards', value=eachPayment.id, checked=true)
+                      else
+                        input(style="width:30%;")(type='radio', name='saved_cards', value=eachPayment.id)
+                .pro-upgrade-btn         
+                  .div
+                    .div Continue
+
+              .promo-fields
+                .div-enter-promo-code
+                  input(type='text', name='promo_code', placeholder='enter promo code')#promo_code
+                  input(type='hidden', name='promocode')#promocodeapplied
+                .div-promo-apply-button 
+                  span.apply-text apply
+                  span.check-mark 
+                .div-promo-messages 
+                  .div-promo-code.verified Verified. Applied. 
+                  .div-promo-code.invalid Invalid code. Try again.
+
+              .div-promo-and-cancel
+                .div
+                  .div-promo-code(id='promoId') promo code
+                .div
+                  .div-promo-code(id='cancelPromoId') back
+
+            .finalise-pro-purchase 
+              .finalise-pro-purchase-heading
+                .finalise-pro-purchase-heading-inside
+                  span.title Review Purchase
+              .finalise-pro-purchase-sub-heading
+                .finalise-pro-purchase-sub-heading-inside
+                  //- span.title $
+                  span.finalize-price $2900 
+                  span.finalize-plan-name Pro Lifetime Member
+              .finalise-pro-purchase-detail
+                p.detail-1 You are about to upgrade your account to a lifetime of Pro!
+                p.detail-2 This will include all Pro feature upgrades as well. Enjoy!
+                p.detail-3 
+              .finalise-pro-purchase-submit
+                .finalise-pro-purchase-submit-btn(data-id=subscriptionData.subscriptionId) Submit
+              .finalise-pro-purchase-cancel
+                .finalise-pro-purchase-cancel-btn cancel
+
+        if subscriptionData.canceledAt
+          .membership-row-wrapper(style="margin-top:-20px")
+            .features-block
+              .div-block
+                .icon-block
+                  .check-icon-block
+                    .check-icon
+                .text-block
+                  .text-header File Exporter
+                  .text-description Export assets and projects for use anywhere.
+                .icon-block
+                  .check-icon-block
+                    .check-icon
+                .text-block
+                  .text-header Profit Share
+                  .text-description Keep 90% of the profits from all your app sales.
+                .icon-block
+                  .check-icon-block
+                    .check-icon
+                .text-block
+                  .text-header Asset Drops
+                  .text-description Receive new 3D models, textures, music and NFT's.
+            .pro-prices-line
+              .div-block
+                .upgrade-title
+                  .div-upgrade-title-block
+                    .text-block-pro-titles Monthly
+                  .div-block-radio
+                    .radio-block.checked(data-value = "1")
+                      //- input(type='radio', name='register_webinar_', checked, value='1')#wnr1
+                .pro-price-div
+                  .pro-price-free-1 FREE
+                  .pro-price 
+                    span#pro-price-1 $29
+                .div-price-description 
+                  .price-descriptionUpgrade your account to Pro for only $29 a month. Cancel anytime.
+              .div-block
+                .upgrade-title
+                  .div-upgrade-title-block
+                    .text-block-pro-titles Lifetime
+                  .div-block-radio
+                    .radio-block(data-value = "2")
+                      //- input(type='radio', name='register_webinar_', value='2')#wnr2
+                .pro-price-div
+                  .pro-price-free-2 FREE
+                  .pro-price 
+                    span#pro-price-2 $2900
+                .div-price-description 
+                  .price-descriptionUpgrade A one time payment of $2900 will get you a Pro account for life!
+            
+            .div-upgrade-now-btn
+              .div
+                .div Upgrade Now
+            
+            .div-upgrade-btn-options
+              if user.Payments.length
+                .div-saved-cards-btn Use saved card
+              else
+                .div-saved-cards-disabled-btn Use saved card
+              .div-new-card-btn Use new card
+
+            .pro-upgrade-now-form
+
+              .pro-fields
+                .div-credit-card
+                  .card-icon
+                    .card-icon-top
+                  #stripe-card
+                .div-continue-arrow
+                  .arrow
+
+              .pro-save-cards-list
+                each eachPayment in user.Payments
+                  .card-entry
+                    .single-card-entry
+                      //- if user.Payments.length == 1
+                      if eachPayment.dataValues.isDefault
+                        input(style="width:10%;")(type='radio', name='saved_cards', value=eachPayment.dataValues.id, checked=true)
+                      //- else if subscriptionData.paymentMethodId == eachPayment.dataValues.paymentableId
+                        input(style="width:10%;")(type='radio', name='saved_cards', value=eachPayment.dataValues.id, checked=true)
+                      else
+                        input(style="width:10%;")(type='radio', name='saved_cards', value=eachPayment.dataValues.id)
+                      span.single-card-text=eachPayment.dataValues.title
+                .pro-upgrade-btn         
+                  .div
+                    .div Continue
+
+              .promo-fields
+                .div-enter-promo-code
+                  input(type='text', name='promo_code', placeholder='enter promo code here')#promo_code
+                  input(type='hidden', name='promocode')#promocodeapplied
+                .div-promo-apply-button 
+                  span.apply-text apply
+                  span.check-mark 
+                .div-promo-messages 
+                  .div-promo-code.verified Verified. Applied. 
+                  .div-promo-code.invalid Invalid code. Try again.
+
+              .div-promo-and-cancel
+                .div
+                  .div-promo-code(id='promoId') promo code
+                .div
+                  .div-promo-code(id='cancelPromoId') back
+
+            .finalise-pro-purchase 
+              .finalise-pro-purchase-heading
+                .finalise-pro-purchase-heading-inside
+                  span.title Review Purchase
+              .finalise-pro-purchase-sub-heading
+                .finalise-pro-purchase-sub-heading-inside
+                  //- span.title $
+                  span.finalize-price $2900 
+                  span.finalize-plan-name Pro Lifetime Member
+              .finalise-pro-purchase-detail
+                p.detail-1 You are about to upgrade your account to a lifetime of Pro!
+                p.detail-2 This will include all Pro feature upgrades as well. Enjoy!
+                p.detail-3 
+              .finalise-pro-purchase-submit
+                .finalise-pro-purchase-submit-btn(data-id=subscriptionData.subscriptionId) Submit
+              .finalise-pro-purchase-cancel
+                .finalise-pro-purchase-cancel-btn cancel
+
+      .account-content-payments
+        .full-boxes
+          .top-row
+            .each-box
+              .box-heading Payment Info
+              .box-content
+                .payment-row
+                  .add-pay-box
+                    .payment-box-content
+                      .loader
+                      .payment-box-text Add new payment method
+                      .card-details
+                        #card-element
+                        .payment-method-buttons.payment-cancel-save-buttons
+                          .sr-field-error#card-errors(role="alert")
+                          button.cancel Cancel
+                          button.save
+                            .subId= subscriptionData.subscriptionId
+                            span.loader
+                            span.text Save
+
+                  each val in user.dataValues.Payments
+                    .payment-box
+                      //- if val.dataValues.paymentableId!=subscriptionData.paymentMethodId
+                      if !val.dataValues.isDefault
+                        .card-opt
+                        .card-popup
+                          .delete-payment-card(data-id=val.dataValues.id) Delete
+                          .make-default-card(data-pid=val.dataValues.id, data-id=val.dataValues.paymentableId) Make Default
+                          .subId= subscriptionData.subscriptionId
+                        .card-content 
+                          .payment-text= val.dataValues.title
+                      else
+                        .card-content-flagged
+                          .default-text Default
+                          .payment-text= val.dataValues.title
+           
+            .each-box
+              .box-heading Purchases
+              .box-content
+                .transaction-history-logs
+                  if transactions.length
+                    each transaction in transactions
+                      .row
+                        .col=transaction.date
+                        .col=transaction.title
+                        .col=transaction.paymentTitle
+                        .col=`${transaction.minusPlus}$${transaction.cost}`
+                  else
+                    .box-top-2 you have not made any purchases yet
+          
+          .bottom-row
+            .each-box
+              .box-heading Sales
+              .box-content
+                .box-top-3 you have not made any sales yet
+            .each-box
+              .box-heading Deposit Info
+              .box-content
+                .box-top-3 Add paypal to receive deposits
+        //- .payments-title This is how I make payments
+        //- .all-payments
+        //-   each eachPayment in user.Payments
+        //-     if eachPayment.paymentableType == 'paypal'
+        //-       .each-payment(data-id=eachPayment.id, data-type=eachPayment.paymentableType)
+        //-         .added-payment-box
+        //-           span= eachPayment.title
+        //-           .menu
+        //-             .menu-items-wrap
+        //-               .menu-icon
+        //-                 div
+        //-                 div
+        //-                 div
+        //-               .clearfix
+        //-               ul.menu-items
+        //-                 li.arcade-open-modal.delete-paypal(data-target="delete-paypal", data-title=eachPayment.title, data-id=eachPayment.id) Delete
+        //-                 li.view-transaction-history View Transaction History
+        //-     else if eachPayment.paymentableType == 'card'
+        //-       .each-payment(data-id=eachPayment.id, data-type=eachPayment.paymentableType)
+        //-         .added-payment-box
+        //-             span= eachPayment.title
+        //-             .menu
+        //-               .menu-items-wrap
+        //-                 .menu-icon
+        //-                   div
+        //-                   div
+        //-                   div
+        //-                 .clearfix
+        //-                 ul.menu-items
+        //-                   //- li.arcade-open-modal.edit-card(data-target="edit-stripe-card", data-title=eachPayment.title, data-id=eachPayment.id) Edit
+        //-                   li.arcade-open-modal.delete-card(data-target="delete-stripe-card", data-title=eachPayment.title, data-id=eachPayment.id) Delete
+        //-                   li.view-transaction-history View Transaction History
+
+        //-   .each-payment
+        //-     input(type="hidden", name="continue_with" value="")
+        //-     .payment-method-buttons
+        //-       button.card Card Details
+        //-       button.paypal PayPal
+        //-     .card-details
+        //-       #card-element
+        //-       .payment-method-buttons.payment-cancel-save-buttons
+        //-         .sr-field-error#card-errors(role="alert")
+        //-         button.cancel Cancel
+        //-         button.save
+        //-           span.spinner
+        //-           span.text Save
+
+        //-     .paypal-details
+        //-         input(type="text", name="paypal_nickname", placeholder="account nickname", class="arcade")
+        //-         button.arcade.authorize-on-paypal
+        //-           span.spinner
+        //-           span.text authorize on PayPal
+        //-             img.go-arrow(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/website/create/go-arrow.svg")
+        //-         button.arcade-2.cancel Cancel
+        //-         .paypal-attention
+        //-           span.text arcade.studio uses PayPal's Merchant-Initiated Payment billing agreement
+        //-           .question-icon
+        //-             span ?
+        //-             div By electing to use your PayPal account to make a purchase through arcade.studio you are agreeing to the Merchant-Initiated Payment billing agreement through PayPal. This billing agreement establishes a relationship between you and arcade.studio through PayPal and allows you to authorize arcade.studio to withdraw funds for payment of purchases you make at our site directly from your PayPal account.
+        //-     .add-payment-box
+        //-       span add payment method
+
+        //- .payment-logs
+        //-   .tabs
+        //-     .transaction-history.active Transaction History
+        //-     .power-ups Power Ups
+        //-   .logs
+        //-     .transaction-history-logs
+        //-       if transactions.length
+        //-         each transaction in transactions
+        //-           .row
+        //-             .col=transaction.date
+        //-             .col=transaction.title
+        //-             .col=transaction.paymentTitle
+        //-             .col=`${transaction.minusPlus}$${transaction.cost}`
+        //-       else
+        //-         .row.no-transaction
+        //-           .col No transaction history
+        //-     .power-ups-logs
+
+  include partials/pro-popup
+  include partials/popup-share
+block script
+  script(src="https://js.stripe.com/v3/")
+  //- script(src="js/stripe_account.js")
+  //- script(src="https://www.paypal.com/sdk/js?client-id=AZO5LAxNQbFfvWcidHbT6yOw7Rkd8R_QkRu72FVq6cQJqcr74HA-itpneRcpxViXPcpQGcX_fG9rUgDh&vault=true")
+  script(src='/js/lib/Sortable.min.js')
+  script(src='/js/lib/jquery-sortable.js')
+  script(src="js/stripe_billing.js")
+  script(src='/js/popup.js')
+  script(src='/js/share.js')
+  script(src='/js/create.js')
+  script(src='/js/dist/menu.js')
+  script(src='/js/csrf.js')

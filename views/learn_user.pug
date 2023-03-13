@@ -1,0 +1,30 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="https://cdn.plyr.io/3.7.2/plyr.css")
+
+block content
+  .learn-container
+    .learn-list
+      each collection in collections
+        .learn-item
+          .learn-collection=collection.title
+          .learn-item-chapters
+            each chapter in collection.Chapters
+              .learn-item-chapter(data-video-id=chapter.video)=chapter.title
+    .player-wrapper
+      .js-player(data-plyr-provider="vimeo", data-plyr-embed-id="")
+
+    style.player-wrapper-style
+
+block script
+  script(src="https://cdn.plyr.io/3.7.2/plyr.polyfilled.js")
+  script(src="/js/csrf.js")
+  script(src="/js/learn_user.js")
+
+  script(async='', src='https://www.googletagmanager.com/gtag/js?id=G-42884FCM73')
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-42884FCM73');

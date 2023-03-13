@@ -1,0 +1,26 @@
+#color-picker-container{
+    position: fixed;
+    z-index: 99999999999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    .backdrop{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+    .color-picker-inner-container{
+        width: 250px;
+        position: absolute;
+        z-index: 99999;
+        #color-picker{
+            position: static;
+        }
+        
+    }
+}

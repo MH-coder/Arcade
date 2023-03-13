@@ -1,0 +1,28 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(name='csrf-token', content=_csrf)
+    title #{title} - Arcade.Studio
+    meta(name='description', content='Now anyone can create and share games, 3D websites, VR experiences and NFTs, all without writing a single line of code!')
+    link(rel='shortcut icon' href='/favicon.ico')
+    link(rel='stylesheet' href='/css/fonts.css')
+    link(rel='stylesheet' href='/css/main.css')
+    block head
+
+  body.main
+    include partials/header
+    include partials/sidebar
+
+    .container
+      include partials/flash
+      block content
+
+    script(src='/js/lib/jquery.min.js')
+    script(src='/js/lib/popper.min.js')
+    script(src='/js/lib/bootstrap.min.js')
+    script(src='/js/sidebar.js')
+
+    block script

@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+  .login-signup-wrapper
+    .login-signup-row
+      form#signup-form(method='POST' action='/signup')
+        input(type='hidden' name='_csrf', value=_csrf)
+        .signup-col
+          .login-signup-title create an account
+          .signup-form
+            input.input-field(type='email' name='email' placeholder='email', autofocus, autocomplete='email', required)
+            input.input-field(type='password' name='password' placeholder='password' autocomplete='new-password' minlength='6', required)
+          .social-buttons-wrapper.signup
+            include ../partials/social
+
+          button.form-button.signup create account
+          .terms-confirmation By pressing “create account” you accept our Terms, Privacy and Alpha policys.
+          //- button.form-button.signup(type='submit') create account
+      form(method='POST' action='/login')
+        input(type='hidden' name='_csrf', value=_csrf)
+        .login-col
+          .login-signup-title sign in
+          .login-form
+            input.input-field(type='email' name='email' placeholder='email', autofocus, autocomplete='email', required)
+            input.input-field(type='password' name='password' placeholder='password' autocomplete='current-password', required)
+          .forgot-password forgot password
+          .social-buttons-wrapper
+            include ../partials/social
+          button.form-button.signup(type='submit') sign in
+block script
+  script(src='/js/login.js')

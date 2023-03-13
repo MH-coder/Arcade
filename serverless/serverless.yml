@@ -1,0 +1,138 @@
+service: arcadestudio-serverless
+# app and org for use with dashboard.serverless.com
+# app: arcadestudio
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  role: arn:aws:iam::394384075716:role/LambdaRole
+  stage: prod
+  region: us-east-2
+  environment:
+    PGUSER: "postgres"
+    PGHOST: "database-1.cpiq55txe0ld.us-east-2.rds.amazonaws.com"
+    PGPASSWORD: "Sg0kSFzw9OjHdeulCzM2"
+    PGDATABASE: "postgres"
+    PGPORT: 5432
+
+layers:
+  module:
+    path: layers
+    compatibleRuntimes:
+      - nodejs10.x
+
+functions:
+  audios:
+    handler: functions/audios/index.handler
+    layers:
+      - { Ref: ModuleLambdaLayer }
+    events:
+      - s3:
+          bucket: arcadestudio-app
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "assets/audios"
+          existing: true
+    vpc:
+      securityGroupIds:
+        - sg-4a664f2c
+      subnetIds:
+        - subnet-b38c1cff
+        - subnet-ec57a487
+        - subnet-f3715989
+    reservedConcurrency: 1
+  environments:
+    handler: functions/environments/index.handler
+    layers:
+      - { Ref: ModuleLambdaLayer }
+    events:
+      - s3:
+          bucket: arcadestudio-app
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "assets/environments"
+          existing: true
+    vpc:
+      securityGroupIds:
+        - sg-4a664f2c
+      subnetIds:
+        - subnet-b38c1cff
+        - subnet-ec57a487
+        - subnet-f3715989
+    reservedConcurrency: 1
+  geometries:
+    handler: functions/geometries/index.handler
+    layers:
+      - { Ref: ModuleLambdaLayer }
+    events:
+      - s3:
+          bucket: arcadestudio-app
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "assets/geometries"
+          existing: true
+    vpc:
+      securityGroupIds:
+        - sg-4a664f2c
+      subnetIds:
+        - subnet-b38c1cff
+        - subnet-ec57a487
+        - subnet-f3715989
+    reservedConcurrency: 1
+  images:
+    handler: functions/images/index.handler
+    layers:
+      - { Ref: ModuleLambdaLayer }
+    events:
+      - s3:
+          bucket: arcadestudio-app
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "assets/images"
+          existing: true
+    vpc:
+      securityGroupIds:
+        - sg-4a664f2c
+      subnetIds:
+        - subnet-b38c1cff
+        - subnet-ec57a487
+        - subnet-f3715989
+    reservedConcurrency: 1
+  materials:
+    handler: functions/materials/index.handler
+    layers:
+      - { Ref: ModuleLambdaLayer }
+    events:
+      - s3:
+          bucket: arcadestudio-app
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "assets/materials"
+          existing: true
+    vpc:
+      securityGroupIds:
+        - sg-4a664f2c
+      subnetIds:
+        - subnet-b38c1cff
+        - subnet-ec57a487
+        - subnet-f3715989
+    reservedConcurrency: 1
+  animations:
+    handler: functions/animations/index.handler
+    layers:
+      - { Ref: ModuleLambdaLayer }
+    events:
+      - s3:
+          bucket: arcadestudio-app
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "assets/animations"
+          existing: true
+    vpc:
+      securityGroupIds:
+        - sg-4a664f2c
+      subnetIds:
+        - subnet-b38c1cff
+        - subnet-ec57a487
+        - subnet-f3715989
+    reservedConcurrency: 1

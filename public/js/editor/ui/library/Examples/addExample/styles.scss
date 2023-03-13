@@ -1,0 +1,72 @@
+@import '../../../../../../css/colors.scss';
+
+.example-modal {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	inset: 0;
+	z-index: 999999;
+	display: grid;
+	place-items: center;
+	background-color: rgba(0, 0, 0, 0.719);
+	button {
+		background-color: $color_4;
+		color: $color_1;
+	}
+	.main-container {
+		width: min(750px, 90%);
+		background-color: black;
+
+		.content {
+			padding: 20px;
+			display: flex;
+			flex-direction: row;
+			gap: 15px;
+			align-items: stretch;
+			.left-container {
+				min-width: 40%;
+				display: flex;
+				justify-content: space-between;
+
+				flex-direction: column;
+				gap: 15px;
+				.upload-thumbnail-btn-container{
+					display: flex;
+					button{
+						flex-grow: 1;
+					}
+					gap:20px;
+					
+				}
+			}
+		}
+		.submit-btn {
+			width: 100%;
+		}
+		input,
+		textarea {
+			border: 1px solid $color_4 !important;
+			padding: 6px !important;
+			color: $color_1;
+			background: transparent;
+			&::placeholder {
+				opacity: 0.5;
+				color: $color_1;
+				font-style: italic;
+			}
+		}
+		textarea{
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
+	}
+	#upload-example-thumbnail {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.example-modal .content {
+		flex-direction: column;
+	}
+}

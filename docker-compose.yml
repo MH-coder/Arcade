@@ -1,0 +1,19 @@
+version: '3.0'
+volumes:
+  nodemodules:
+    name: arcadestuido_nodemodules
+services:
+  arcadestudio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - "3001:3001"
+     - "9829:9829"
+    volumes:
+      - ./:/arcadestudio
+      - nodemodules:/arcadestudio/node_modules
+    restart: always
+    env_file:
+      - .env
+     

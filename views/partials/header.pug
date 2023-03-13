@@ -1,0 +1,17 @@
+.main-menu
+  .title-block
+    .arcadestudio-title arcade.studio
+    .menu-hamburger
+      div#nav-icon3
+        span
+        span
+        span
+        span
+  unless isAdmin
+    .main-menu-link-wrapper
+      .main-menu-link
+        a.nav-link(class=(title === 'Explore') ? 'active' : undefined, href='/') explore
+      .main-menu-link
+        a.nav-link(class=(title === 'Learn') ? 'active' : undefined, href='/learn') learn
+      .main-menu-link
+        a.nav-link(class=(title === 'Create') ? 'active' : undefined, href='/create') create

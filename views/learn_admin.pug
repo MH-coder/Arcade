@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  .add-collection
+    img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/engine-ui/add-btn.svg" width="15")
+  .learn-container
+    .learn-list
+      each collection in collections
+        .learn-item
+          .learn-collection(data-id=collection.id)
+            .icon-delete
+              img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/engine-ui/close-delete-btn.svg" width="12")
+            span(data-property="title").editable=collection.title
+          .learn-item-chapters
+            each chapter in collection.Chapters
+              .learn-item-chapter(data-id=chapter.id)
+                .icon-delete
+                  img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/engine-ui/close-delete-btn.svg" width="12")
+                span(data-property="title").editable=chapter.title
+                span.separator=":"
+                span(data-property="video").editable=chapter.video
+          .add-chapter
+            img(src="https://arcadestudio-assets.s3.us-east-2.amazonaws.com/engine-ui/add-btn.svg" width="12")
+block script
+block script
+  script(src='/js/csrf.js')
+  script(src='/js/lib/Sortable.min.js')
+  script(src='/js/lib/jquery-sortable.js')
+  script(src='/js/learn_admin.js')

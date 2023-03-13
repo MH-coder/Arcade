@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+  .login-signup-wrapper
+    .login-signup-row
+      form.reset-form(method='POST')
+        input(type='hidden' name='_csrf', value=_csrf)
+        .signup-col
+          .login-signup-title reset password
+          .signup-form
+            input.input-field(type='password' name='password' id='password' placeholder='new password', autofocus, autocomplete='new-password' minlength='8', required)
+            input.input-field(type='password' name='confirm' id='confirm' placeholder='confirm password' autocomplete='new-password' minlength='8', required)
+          button.form-button.signup(type='submit') reset

@@ -1,0 +1,43 @@
+.examples-container {
+	.example-actions {
+		display: none;
+	}
+
+	.example-row {
+		background-color: #14151b;
+		padding-right: 0;
+		.example-name {
+			min-width: 40px;
+			//height: 100%;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			max-width: 100%;
+			&:focus-visible{
+				outline: none;
+			}
+			*{
+				display: inline;
+			}
+			br{
+				display: none;
+			}
+		}
+
+		&:hover {
+			background-color: #20232e;
+			.example-actions {
+				display: block;
+			}
+			.example-name {
+				max-width: 45%;
+			}
+		}
+		.icon-button {
+			border-left: 1px solid #14151b;
+		}
+		.icon-button:hover {
+			background-color: #242b47;
+		}
+	}
+}

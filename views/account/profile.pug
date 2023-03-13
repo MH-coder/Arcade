@@ -1,0 +1,31 @@
+extends ../layout
+
+block head
+  script(src='/js/lib/lottie-player.js')
+
+block content
+  .profile-view
+    .portfolio-banner(style=(portfolio.backgroundUrl != null && (portfolio.backgroundType == null || portfolio.backgroundType == "image")) ? `background: url(${portfolio.backgroundUrl});` : ``)
+      if portfolio.backgroundType == "animation"
+        lottie-player.portfolio-bg(autoplay=true loop=true mode="normal" src=portfolio.backgroundUrl)
+      if portfolio.backgroundType == "video"
+        video.portfolio-bg(preload="auto" autoplay=true loop="loop" muted="muted" volume="0")
+          source(src=portfolio.backgroundUrl)
+      if portfolio.backgroundType == "app"
+        iframe.portfolio-bg(src=portfolio.backgroundUrl)
+    .portfolio-gallery-wrapper
+      .portfolio-gallery
+        each item in portfolio.items
+          .portfolio-item(data-slug=item.slug, data-title=item.title, data-details=(item.author?item.title + ": " + item.author:item.title), data-author=(item.author ? item.author : '') data-description=item.description, data-username=item.author, data-thumbnail=item.thumbnail, class=(item.thumbUrl ? 'no-border' : ''))
+            if item.thumbUrl
+              img.portfolio-image(src=item.thumbUrl)
+            else
+              .questionmark
+            .portfolio-title=item.title
+  include ../partials/app-popup
+block script
+  script.
+    var portfolios=!{JSON.stringify(portfolio.items)};
+  script(src='/js/popup.js')
+  script(src='/js/profile.js')
+  script(src='/js/share.js')
